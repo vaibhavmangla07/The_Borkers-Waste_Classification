@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import settings
-from app.routes import categories, upload, classification
+from app.routes import categories, upload, classification, history
 
 app = FastAPI(
     title=settings.APP_NAME,
@@ -25,6 +25,7 @@ app.add_middleware(
 app.include_router(categories.router, prefix="")
 app.include_router(upload.router, prefix="")
 app.include_router(classification.router, prefix="")
+app.include_router(history.router, prefix="")
 
 @app.get("/")
 def read_root():
