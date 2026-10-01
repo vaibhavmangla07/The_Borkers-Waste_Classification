@@ -6,3 +6,5 @@ psycopg[binary]
 alembic
 pillow
 python-multipart
+torch
+torchvision

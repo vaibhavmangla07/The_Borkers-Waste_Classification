@@ -6,3 +6,6 @@ __pycache__/
 *.egg-info/
 storage/uploads/*
 !storage/uploads/.gitkeep
+models/*.pth
+models/*.pt
+models/*.onnx

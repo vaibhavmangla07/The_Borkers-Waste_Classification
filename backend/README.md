@@ -101,4 +101,19 @@ python scripts/seed.py
 
 *Note: Phase 6 only validates and stores the image locally. AI classification will be added in Phase 7.*
 
+---
+
+## Phase 7: PyTorch AI Module & Pretrained Vision Model
+
+### AI
+**Framework:** PyTorch  
+**Vision:** torchvision  
+**Model:** MobileNetV3 Small (Lightweight pretrained model)  
+**Inference:** Local execution  
+**Device Support:** CUDA / MPS / CPU  
+**Top-K:** 3 predictions returned  
+
+*Important note: The current pretrained model is an AI pipeline foundation to establish local inference correctly without relying on cloud services. The final waste-category classifier will use a project-specific fine-tuned model.*
+
+
 
