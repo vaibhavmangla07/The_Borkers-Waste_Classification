@@ -24,8 +24,21 @@ export function useAnalytics(range = '7d') {
         ]);
         if (isMounted) {
           setSummary(sumData);
-          setCategories(catData || []);
-          setActivity(actData || []);
+          setCategories(catData?.items || []);
+          
+          // Group recent classifications by date for the activity chart
+          const grouped = (actData || []).reduce((acc, curr) => {
+            const dateStr = new Date(curr.created_at).toISOString().split('T')[0];
+            if (!acc[dateStr]) acc[dateStr] = 0;
+            acc[dateStr]++;
+            return acc;
+          }, {});
+          
+          const chartData = Object.entries(grouped)
+            .sort((a, b) => a[0].localeCompare(b[0]))
+            .map(([date, scans]) => ({ date, scans }));
+            
+          setActivity(chartData);
         }
       } catch (err) {
         if (isMounted) {

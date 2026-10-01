@@ -10,7 +10,7 @@
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL !== undefined 
   ? import.meta.env.VITE_API_BASE_URL 
   : (import.meta.env.DEV ? 'http://localhost:8000' : '');
-const ENABLE_MOCKS_ON_FAILURE = true;
+const ENABLE_MOCKS_ON_FAILURE = false;
 
 /**
  * Standardized API error representation
@@ -226,7 +226,7 @@ export const api = {
     }
 
     const formData = new FormData();
-    formData.append('image', file);
+    formData.append('file', file);
 
     try {
       return await request('/api/classify', {
@@ -302,20 +302,13 @@ export const api = {
     }
   },
 
-  async getAnalyticsActivity(range = '7d') {
+  async getAnalyticsActivity(limit = 10) {
     try {
-      return await request(`/api/analytics/activity?range=${encodeURIComponent(range)}`);
+      const data = await request(`/api/analytics/recent?limit=${limit}`);
+      return data.items || [];
     } catch (err) {
       if (ENABLE_MOCKS_ON_FAILURE) {
-        return [
-          { date: '2026-09-25', scans: 410 },
-          { date: '2026-09-26', scans: 530 },
-          { date: '2026-09-27', scans: 620 },
-          { date: '2026-09-28', scans: 490 },
-          { date: '2026-09-29', scans: 780 },
-          { date: '2026-09-30', scans: 890 },
-          { date: '2026-10-01', scans: 940 }
-        ];
+        return [];
       }
       throw err;
     }

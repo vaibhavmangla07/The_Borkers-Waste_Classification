@@ -14,7 +14,6 @@ export function GuidanceCard({ disposal, confidenceLevel = 'high' }) {
           <Trash2 size={24} />
         </div>
         <div>
-          <span className="guidance-bin-type">Recommended Bin: {disposal.bin_type}</span>
           <h3 className="guidance-title">{disposal.title}</h3>
         </div>
       </div>
@@ -30,35 +29,25 @@ export function GuidanceCard({ disposal, confidenceLevel = 'high' }) {
       )}
 
       <div className="guidance-sections">
-        {disposal.instructions && disposal.instructions.length > 0 && (
+        {disposal.instructions && (
           <div className="guidance-section do-section">
             <h4 className="section-label do-label">
               <CheckCircle2 size={16} /> What to Do
             </h4>
-            <ul className="guidance-list">
-              {disposal.instructions.map((item, idx) => (
-                <li key={idx} className="guidance-list-item">
-                  <span className="bullet-do">✓</span>
-                  <span>{item}</span>
-                </li>
-              ))}
-            </ul>
+            <div className="guidance-text">
+              {disposal.instructions}
+            </div>
           </div>
         )}
 
-        {disposal.avoid && disposal.avoid.length > 0 && (
+        {disposal.do_not && (
           <div className="guidance-section avoid-section">
             <h4 className="section-label avoid-label">
               <Info size={16} /> Things to Avoid
             </h4>
-            <ul className="guidance-list">
-              {disposal.avoid.map((item, idx) => (
-                <li key={idx} className="guidance-list-item">
-                  <span className="bullet-avoid">✕</span>
-                  <span>{item}</span>
-                </li>
-              ))}
-            </ul>
+            <div className="guidance-text">
+              {disposal.do_not}
+            </div>
           </div>
         )}
       </div>

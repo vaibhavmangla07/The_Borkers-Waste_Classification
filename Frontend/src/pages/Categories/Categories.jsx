@@ -1,10 +1,50 @@
-import React from 'react';
-import { BookOpen, CheckCircle2 } from 'lucide-react';
-import { MOCK_DATA } from '../../services/api';
+import React, { useState, useEffect } from 'react';
+import { BookOpen, CheckCircle2, AlertCircle } from 'lucide-react';
+import { api } from '../../services/api';
 import './Categories.css';
 
 export function Categories() {
-  const categories = MOCK_DATA.categories;
+  const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    async function loadCategories() {
+      try {
+        const data = await api.getCategories();
+        setCategories(data);
+        setError(null);
+      } catch (err) {
+        console.error('Failed to load categories', err);
+        setError('Unable to load waste categories. Please try again later.');
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadCategories();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="categories-page container">
+        <div className="loading-state">
+          <div className="spinner"></div>
+          <p>Loading waste categories...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="categories-page container">
+        <div className="error-panel">
+          <AlertCircle size={24} className="error-icon" />
+          <p>{error}</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="categories-page container">
@@ -18,30 +58,36 @@ export function Categories() {
         </p>
       </div>
 
-      <div className="categories-grid">
-        {categories.map((cat) => (
-          <div key={cat.id} className="glass-panel glass-panel-hover category-card">
-            <div className="category-card-top">
-              <span className="badge badge-emerald">{cat.group}</span>
-              <span className="category-id">Stream #{cat.id}</span>
-            </div>
-
-            <h3 className="category-name">{cat.name}</h3>
-            <p className="category-desc">{cat.description}</p>
-
-            <div className="category-guidance-preview">
-              <div className="preview-label">
-                <CheckCircle2 size={14} className="check-icon" /> Disposal Rule
+      {categories.length === 0 ? (
+        <div className="empty-state">
+          <BookOpen size={48} className="empty-icon" />
+          <h3>No categories found</h3>
+          <p>The waste directory is currently empty.</p>
+        </div>
+      ) : (
+        <div className="categories-grid">
+          {categories.map((cat) => (
+            <div key={cat.id} className="glass-panel glass-panel-hover category-card">
+              <div className="category-card-top">
+                <span className="badge badge-emerald">Category</span>
+                <span className="category-id">Stream #{cat.id}</span>
               </div>
-              <p className="guidance-summary">
-                {cat.group === 'Recyclable' && 'Clean, rinse, and place in dry recyclable container.'}
-                {cat.group === 'Compostable' && 'Segregate into wet bio-degradable green container.'}
-                {cat.group === 'Special Disposal' && 'Requires specialized e-waste or hazard drop-off facility.'}
-              </p>
+
+              <h3 className="category-name">{cat.name}</h3>
+              <p className="category-desc">{cat.description}</p>
+
+              <div className="category-guidance-preview">
+                <div className="preview-label">
+                  <CheckCircle2 size={14} className="check-icon" /> Disposal Rule
+                </div>
+                <p className="guidance-summary">
+                  {cat.guidelines ? cat.guidelines.title : 'General disposal guidelines apply.'}
+                </p>
+              </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

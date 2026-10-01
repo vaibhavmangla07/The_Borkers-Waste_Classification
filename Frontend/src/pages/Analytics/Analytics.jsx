@@ -74,11 +74,11 @@ export function Analytics() {
 
             <div className="category-bars-container">
               {categories.map((cat) => (
-                <div key={cat.category} className="cat-bar-item">
+                <div key={cat.category_slug} className="cat-bar-item">
                   <div className="cat-bar-header">
-                    <span className="cat-name">{cat.category}</span>
+                    <span className="cat-name">{cat.category_name}</span>
                     <span className="cat-stats">
-                      <strong>{cat.percentage}%</strong> ({cat.count.toLocaleString()} scans)
+                      <strong>{cat.percentage.toFixed(1)}%</strong> ({cat.classification_count.toLocaleString()} scans)
                     </span>
                   </div>
                   <div className="cat-track">

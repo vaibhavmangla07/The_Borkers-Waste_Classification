@@ -8,7 +8,7 @@ export function PredictionBars({ predictions = [] }) {
 
   const getConfidenceLevel = (score) => {
     if (score >= 0.8) return 'high';
-    if (score >= 0.5) return 'moderate';
+    if (score >= 0.6) return 'medium';
     return 'low';
   };
 
@@ -21,11 +21,11 @@ export function PredictionBars({ predictions = [] }) {
           const level = getConfidenceLevel(item.confidence);
 
           return (
-            <div key={item.category || index} className="prediction-item">
+            <div key={item.label || index} className="prediction-item">
               <div className="prediction-item-header">
                 <div className="prediction-label-wrap">
                   <span className="prediction-rank">#{index + 1}</span>
-                  <span className="prediction-name">{item.category}</span>
+                  <span className="prediction-name">{item.label}</span>
                 </div>
                 <div className="prediction-value-wrap">
                   <span className={`prediction-level-tag tag-${level}`}>

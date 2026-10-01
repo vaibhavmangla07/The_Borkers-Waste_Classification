@@ -124,6 +124,13 @@
   color: #fca5a5;
 }
 
+.guidance-text {
+  font-size: 0.95rem;
+  color: var(--text-main);
+  line-height: 1.5;
+  white-space: pre-wrap;
+}
+
 .guidance-list {
   list-style: none;
   display: flex;

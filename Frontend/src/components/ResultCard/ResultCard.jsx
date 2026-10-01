@@ -8,17 +8,19 @@ export function ResultCard({ result, imageUrl }) {
   if (!result) return null;
 
   const {
-    category,
+    id,
+    predicted_category,
     confidence,
     confidence_level,
     predictions,
-    disposal,
-    inference_ms,
+    guidance,
+    model_name,
+    model_version,
     created_at
   } = result;
 
   const percentage = Math.round(confidence * 1000) / 10;
-  const level = confidence_level || (confidence >= 0.8 ? 'high' : confidence >= 0.5 ? 'moderate' : 'low');
+  const level = confidence_level || (confidence >= 0.8 ? 'high' : confidence >= 0.6 ? 'medium' : 'low');
 
   const formattedTime = created_at
     ? new Date(created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
@@ -29,7 +31,7 @@ export function ResultCard({ result, imageUrl }) {
       <div className="result-card-top">
         {imageUrl && (
           <div className="result-thumbnail-container">
-            <img src={imageUrl} alt={`Classified as ${category}`} className="result-thumbnail" />
+            <img src={imageUrl} alt={`Classified as ${predicted_category?.name}`} className="result-thumbnail" />
             <div className={`confidence-tag-overlay tag-${level}`}>
               {level.toUpperCase()} CONFIDENCE
             </div>
@@ -38,11 +40,11 @@ export function ResultCard({ result, imageUrl }) {
 
         <div className="result-primary-info">
           <div className="result-meta-row">
-            <span className="result-id">Scan #{result.classification_id || 'ID'}</span>
+            <span className="result-id">Scan #{id || 'ID'}</span>
             <div className="result-stats-pills">
-              {inference_ms && (
-                <span className="stat-pill" title="PyTorch Inference Latency">
-                  <Zap size={13} /> {inference_ms}ms
+              {model_version && (
+                <span className="stat-pill" title="Model Version">
+                  <Zap size={13} /> {model_name} v{model_version}
                 </span>
               )}
               <span className="stat-pill">
@@ -51,7 +53,7 @@ export function ResultCard({ result, imageUrl }) {
             </div>
           </div>
 
-          <h2 className="result-category-title">{category}</h2>
+          <h2 className="result-category-title">{predicted_category?.name}</h2>
 
           <div className="result-confidence-highlight">
             <div className="confidence-numeric-box">
@@ -64,9 +66,9 @@ export function ResultCard({ result, imageUrl }) {
                   <CheckCircle size={16} /> Verified high-confidence AI prediction. Safe to follow disposal protocols.
                 </p>
               )}
-              {level === 'moderate' && (
-                <p className="status-text text-moderate">
-                  <AlertTriangle size={16} /> Moderate confidence. Double check item materials if unsure.
+              {level === 'medium' && (
+                <p className="status-text text-medium">
+                  <AlertTriangle size={16} /> Medium confidence. Double check item materials if unsure.
                 </p>
               )}
               {level === 'low' && (
@@ -85,9 +87,9 @@ export function ResultCard({ result, imageUrl }) {
         </div>
       )}
 
-      {disposal && (
+      {guidance && guidance.length > 0 && (
         <div className="result-section-divider">
-          <GuidanceCard disposal={disposal} confidenceLevel={level} />
+          <GuidanceCard disposal={guidance[0]} confidenceLevel={level} />
         </div>
       )}
     </div>

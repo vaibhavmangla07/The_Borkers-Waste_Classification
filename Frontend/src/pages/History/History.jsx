@@ -12,10 +12,11 @@ export function History() {
 
   const filteredItems = useMemo(() => {
     return items.filter((item) => {
+      const catName = item.predicted_category?.name || '';
       const matchesSearch = 
-        item.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        catName.toLowerCase().includes(searchTerm.toLowerCase()) ||
         String(item.id).includes(searchTerm);
-      const matchesCat = selectedCategory === 'ALL' || item.category.toUpperCase() === selectedCategory;
+      const matchesCat = selectedCategory === 'ALL' || catName.toUpperCase() === selectedCategory;
       return matchesSearch && matchesCat;
     });
   }, [items, searchTerm, selectedCategory]);
@@ -121,11 +122,11 @@ export function History() {
                     <tr key={item.id}>
                       <td className="table-id-cell">#{item.id}</td>
                       <td className="table-cat-cell">
-                        <strong>{item.category}</strong>
+                        <strong>{item.predicted_category?.name}</strong>
                       </td>
                       <td>
                         <div className="table-confidence-wrap">
-                          <span className={`badge badge-${item.confidence_level === 'high' ? 'emerald' : item.confidence_level === 'moderate' ? 'amber' : 'rose'}`}>
+                          <span className={`badge badge-${item.confidence_level === 'high' ? 'emerald' : item.confidence_level === 'medium' ? 'amber' : 'rose'}`}>
                             {item.confidence_level.toUpperCase()}
                           </span>
                           <span className="confidence-num">{percentage}%</span>
@@ -160,12 +161,12 @@ export function History() {
                 >
                   <div className="card-top-row">
                     <span className="mobile-item-id">Scan #{item.id}</span>
-                    <span className={`badge badge-${item.confidence_level === 'high' ? 'emerald' : item.confidence_level === 'moderate' ? 'amber' : 'rose'}`}>
+                    <span className={`badge badge-${item.confidence_level === 'high' ? 'emerald' : item.confidence_level === 'medium' ? 'amber' : 'rose'}`}>
                       {item.confidence_level.toUpperCase()} ({percentage}%)
                     </span>
                   </div>
 
-                  <h3 className="mobile-item-category">{item.category}</h3>
+                  <h3 className="mobile-item-category">{item.predicted_category?.name}</h3>
 
                   <div className="card-bottom-row">
                     <span className="mobile-item-date">
