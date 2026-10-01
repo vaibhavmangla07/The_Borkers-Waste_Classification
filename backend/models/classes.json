@@ -1,0 +1,12 @@
+{
+  "classes": [
+    "plastic",
+    "paper",
+    "cardboard",
+    "glass",
+    "metal",
+    "organic",
+    "e-waste",
+    "other"
+  ]
+}

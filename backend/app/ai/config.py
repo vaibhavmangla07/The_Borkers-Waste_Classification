@@ -1,8 +1,8 @@
 import os
 
 # Base AI configuration
-MODEL_NAME = os.getenv("AI_MODEL_NAME", "mobilenet_v3_small")
-MODEL_VERSION = os.getenv("AI_MODEL_VERSION", "0.1.0")
+MODEL_NAME = os.getenv("AI_MODEL_NAME", "efficientnet-b0")
+MODEL_VERSION = os.getenv("AI_MODEL_VERSION", "waste-v1")
 TOP_K = int(os.getenv("AI_TOP_K", "3"))
 
 def get_confidence_level(confidence: float) -> str:

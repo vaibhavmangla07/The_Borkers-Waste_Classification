@@ -28,9 +28,9 @@ def mock_predictor():
             model_version="0.1.0",
             device="cpu",
             predictions=[
-                PredictionResult(rank=1, label="water bottle", confidence=0.95, confidence_level="high"),
-                PredictionResult(rank=2, label="envelope", confidence=0.03, confidence_level="low"),
-                PredictionResult(rank=3, label="laptop", confidence=0.02, confidence_level="low"),
+                PredictionResult(rank=1, label="plastic", confidence=0.95, confidence_level="high"),
+                PredictionResult(rank=2, label="paper", confidence=0.03, confidence_level="low"),
+                PredictionResult(rank=3, label="e-waste", confidence=0.02, confidence_level="low"),
             ]
         )
         yield mock
@@ -46,7 +46,7 @@ def test_classify_image_success(mock_predictor):
     
     assert "id" in data
     assert data["model_name"] == "mock_model"
-    assert data["predicted_category"]["slug"] == "plastic" # water bottle mapped to plastic
+    assert data["predicted_category"]["slug"] == "plastic"
     assert data["confidence"] == 0.95
     assert len(data["predictions"]) == 3
     assert data["predictions"][0]["label"] == "plastic"

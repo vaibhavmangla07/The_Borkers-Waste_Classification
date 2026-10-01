@@ -1,6 +1,7 @@
 import torch
 import torch.nn.functional as F
 from PIL import Image
+from fastapi import HTTPException
 
 from app.ai.config import MODEL_NAME, MODEL_VERSION, TOP_K, get_confidence_level
 from app.ai.model import ModelLoader
@@ -17,6 +18,9 @@ class Predictor:
         # 1. Ensure model is loaded
         model, device = ModelLoader.get_model()
         
+        if model is None:
+            raise HTTPException(status_code=503, detail="AI model is currently unavailable")
+        
         # 2. Preprocess image
         transform = ImagePreprocessor.get_transform()
         # Ensure image is RGB
@@ -28,7 +32,7 @@ class Predictor:
         img_tensor = img_tensor.unsqueeze(0).to(device)
         
         # 3. Inference
-        with torch.no_grad():
+        with torch.inference_mode():
             output = model(img_tensor)
             
         # 4. Apply softmax to get probabilities

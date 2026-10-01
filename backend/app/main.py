@@ -123,3 +123,11 @@ def read_root():
 @app.get("/health")
 def health_check():
     return {"status": "healthy"}
+
+@app.get("/readiness")
+def readiness_check():
+    from app.ai.model import ModelLoader
+    return {
+        "status": "ready",
+        "model_available": ModelLoader.is_available()
+    }

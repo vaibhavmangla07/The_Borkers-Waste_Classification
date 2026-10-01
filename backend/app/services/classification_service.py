@@ -16,28 +16,6 @@ from app.schemas.category import CategoryResponse, DisposalGuidelineResponse
 
 logger = logging.getLogger(__name__)
 
-# Very basic mapping from ImageNet to our project's categories
-# A proper model would output valid slugs directly.
-WASTE_LABEL_MAPPING = {
-    # This mapping is required because we are using an ImageNet base model.
-    # In a real setup, the fine-tuned model would emit proper slugs.
-    "water bottle": "plastic",
-    "pop bottle": "plastic",
-    "pill bottle": "plastic",
-    "beer bottle": "glass",
-    "wine bottle": "glass",
-    "paper towel": "paper",
-    "envelope": "paper",
-    "carton": "cardboard",
-    "desktop computer": "e-waste",
-    "laptop": "e-waste",
-    "mouse": "e-waste",
-    " Granny Smith": "organic",
-    "strawberry": "organic",
-    "banana": "organic",
-    "bell pepper": "organic",
-}
-
 class ClassificationService:
     @staticmethod
     def classify(file: UploadFile, db: Session) -> dict:
@@ -60,8 +38,7 @@ class ClassificationService:
             top_prediction = predictions[0]
 
             # 4. Resolve Category
-            raw_label = top_prediction.label.lower()
-            mapped_slug = WASTE_LABEL_MAPPING.get(raw_label, "other")
+            mapped_slug = top_prediction.label.lower()
 
             stmt = select(WasteCategory).where(WasteCategory.slug == mapped_slug)
             category = db.scalars(stmt).first()
@@ -89,8 +66,7 @@ class ClassificationService:
                 prediction_responses = []
                 for pred in predictions:
                     # Find category for each prediction if possible, else default to 'other'
-                    pred_label = pred.label.lower()
-                    pred_slug = WASTE_LABEL_MAPPING.get(pred_label, "other")
+                    pred_slug = pred.label.lower()
                     pred_cat_stmt = select(WasteCategory).where(WasteCategory.slug == pred_slug)
                     pred_category = db.scalars(pred_cat_stmt).first()
                     pred_category_id = pred_category.id if pred_category else category.id

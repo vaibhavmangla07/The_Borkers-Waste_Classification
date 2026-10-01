@@ -74,7 +74,9 @@ pytest -q
 
 ## Model
 
-The AI classification model and metadata must be placed in the `artifacts/` directory:
-- `artifacts/model.pt`: The PyTorch model checkpoint.
-- `artifacts/classes.json`: The class mapping (must match the seeded categories in the DB).
-- `artifacts/metrics.json`: Accuracy and other validation metrics.
+The PyTorch AI classification model and metadata must be placed in the `models/` directory:
+- `models/best_model.pt`: The fine-tuned EfficientNet-B0 model checkpoint.
+- `models/classes.json`: The class mapping which outputs exact waste slugs matching the DB.
+- `models/model_metadata.json`: The model's validation metrics, config, and required normalization settings.
+
+**Note**: The raw Kaggle dataset is not required at runtime. Only the trained artifact is needed. Inferences are executed efficiently on CPU or MPS/CUDA depending on availability.
