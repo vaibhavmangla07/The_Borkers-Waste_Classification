@@ -52,9 +52,6 @@ out/
 *.db
 *.sqlite3
 
-# Uploads & Media
-Backend/app/static/uploads/*
-!Backend/app/static/uploads/.gitkeep
 
 # ML Model weights (large files)
 *.pt
