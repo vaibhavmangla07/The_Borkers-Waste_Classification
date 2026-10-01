@@ -1,0 +1,18 @@
+{
+  "direct_mapping": {
+    "paper": "paper",
+    "cardboard": "cardboard",
+    "plastic": "plastic",
+    "metal": "metal",
+    "battery": "e-waste",
+    "brown-glass": "glass",
+    "green-glass": "glass",
+    "white-glass": "glass"
+  },
+  "review_required": {
+    "biological": "organic",
+    "clothes": "other",
+    "shoes": "other",
+    "trash": "other"
+  }
+}

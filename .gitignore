@@ -62,3 +62,11 @@ out/
 *.bin
 *.h5
 *.keras
+
+# ML Directory
+ml/.venv/
+ml/__pycache__/
+ml/garbage_collection_dataset/
+ml/garbage_classification_dataset/
+ml/reports/*.png
+ml/reports/*.json
