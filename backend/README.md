@@ -115,5 +115,57 @@ python scripts/seed.py
 
 *Important note: The current pretrained model is an AI pipeline foundation to establish local inference correctly without relying on cloud services. The final waste-category classifier will use a project-specific fine-tuned model.*
 
+---
+
+## Phase 8: End-to-End Waste Classification API
+
+### Classification API
+- **POST** `/api/classify` - Upload and classify an image in one step
+
+**Content-Type:** `multipart/form-data`
+**Field:** `file`
+
+**Example Response:**
+```json
+{
+    "id": 1,
+    "image_filename": "uuid.jpg",
+    "predicted_category": {
+        "id": 1,
+        "name": "Plastic",
+        "slug": "plastic",
+        "description": "...",
+        "is_active": true,
+        "created_at": "...",
+        "updated_at": "..."
+    },
+    "confidence": 0.95,
+    "confidence_level": "high",
+    "model_name": "mobilenet_v3_small",
+    "model_version": "0.1.0",
+    "predictions": [
+        {
+            "rank": 1,
+            "label": "plastic",
+            "confidence": 0.95,
+            "confidence_level": "high"
+        }
+    ],
+    "guidance": [
+        {
+            "id": 1,
+            "category_id": 1,
+            "title": "Plastic Disposal",
+            "instructions": "Rinse before recycling",
+            "do_not": "Do not put plastic bags in the bin",
+            "created_at": "...",
+            "updated_at": "..."
+        }
+    ],
+    "created_at": "..."
+}
+```
+
+
 
 
