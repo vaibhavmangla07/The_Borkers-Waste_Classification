@@ -1,18 +1,24 @@
 {
-  "direct_mapping": {
-    "paper": "paper",
-    "cardboard": "cardboard",
-    "plastic": "plastic",
-    "metal": "metal",
-    "battery": "e-waste",
-    "brown-glass": "glass",
-    "green-glass": "glass",
-    "white-glass": "glass"
-  },
-  "review_required": {
-    "biological": "organic",
-    "clothes": "other",
-    "shoes": "other",
-    "trash": "other"
-  }
+    "dataset_to_application": {
+        "paper": "paper",
+        "cardboard": "cardboard",
+        "plastic": "plastic",
+        "metal": "metal",
+        "battery": "e-waste",
+        "brown-glass": "glass",
+        "green-glass": "glass",
+        "white-glass": "glass",
+        "biological": "organic",
+        "clothes": "other",
+        "shoes": "other",
+        "trash": "other"
+    },
+    "excluded_classes": [],
+    "notes": {
+        "battery": "Categorized as e-waste per backend mapping",
+        "biological": "Categorized as organic",
+        "clothes": "Categorized as other",
+        "shoes": "Categorized as other",
+        "trash": "Categorized as other"
+    }
 }
