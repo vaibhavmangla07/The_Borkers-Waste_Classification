@@ -4,3 +4,5 @@ Pillow
 numpy
 matplotlib
 tqdm
+scikit-learn
+seaborn
