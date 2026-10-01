@@ -1,0 +1,70 @@
+version: "3.8"
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: ecovision_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ecovision_user
+      POSTGRES_PASSWORD: ecovision_password
+      POSTGRES_DB: ecovision
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ecovision_user -d ecovision"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - ecovision_net
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: ecovision_backend
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      - DATABASE_URL=postgresql+psycopg://ecovision_user:ecovision_password@postgres:5432/ecovision
+      - CORS_ORIGINS=http://localhost
+    ports:
+      - "8000:8000"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - backend_storage:/app/storage
+    networks:
+      - ecovision_net
+
+  frontend:
+    build:
+      context: ./Frontend
+      dockerfile: Dockerfile
+    container_name: ecovision_frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "80:80"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80/"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - ecovision_net
+
+volumes:
+  postgres_data:
+  backend_storage:
+
+networks:
+  ecovision_net:
+    driver: bridge
