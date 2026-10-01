@@ -7,3 +7,5 @@ __pycache__/
 .gitignore
 tests/
 *.md
+storage/uploads/*
+!storage/uploads/.gitkeep

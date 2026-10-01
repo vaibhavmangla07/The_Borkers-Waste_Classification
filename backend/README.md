@@ -63,3 +63,42 @@ alembic downgrade -1
 ```bash
 python scripts/seed.py
 ```
+
+---
+
+## Phase 5: Pydantic Schemas + Categories API
+
+### New Endpoints
+- **GET** `/api/categories` - Get all waste categories
+- **GET** `/api/categories/{slug}` - Get a category by its slug
+- **GET** `/api/categories/{slug}/guidance` - Get disposal guidance for a category
+
+---
+
+## Phase 6: Image Upload & Validation
+
+### Image Upload API
+- **POST** `/api/upload` - Upload an image for waste classification
+
+**Content-Type:** `multipart/form-data`
+**Field:** `file`
+
+**Supported Formats:** JPEG, PNG, WEBP
+**Maximum Size:** 10 MB
+
+**Example Response:**
+```json
+{
+    "filename": "generated-uuid.jpg",
+    "original_filename": "plastic-bottle.jpg",
+    "content_type": "image/jpeg",
+    "size_bytes": 245123,
+    "width": 640,
+    "height": 480,
+    "message": "Image uploaded successfully"
+}
+```
+
+*Note: Phase 6 only validates and stores the image locally. AI classification will be added in Phase 7.*
+
+
