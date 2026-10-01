@@ -28,11 +28,17 @@ class ModelLoader:
                 return None, None
                 
             try:
-                # Construct architecture
+                # Construct architecture matching the trained model
                 model = efficientnet_b0(weights=None)
                 num_ftrs = model.classifier[1].in_features
-                # We have 8 classes
-                model.classifier[1] = nn.Linear(num_ftrs, 8)
+                # Match the improved classifier head used during training
+                model.classifier = nn.Sequential(
+                    nn.Dropout(p=0.3),
+                    nn.Linear(num_ftrs, 256),
+                    nn.ReLU(inplace=True),
+                    nn.Dropout(p=0.2),
+                    nn.Linear(256, 8),
+                )
                 
                 cls._device = get_device()
                 

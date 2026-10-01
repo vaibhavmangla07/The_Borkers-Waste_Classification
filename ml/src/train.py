@@ -66,11 +66,12 @@ def evaluate(model, dataloader, criterion, device):
     
     return epoch_loss, metrics
 
-def train_stage(model, stage_name, num_epochs, train_loader, val_loader, criterion, optimizer, device, artifacts_dir, start_epoch, best_val_f1):
+def train_stage(model, stage_name, num_epochs, train_loader, val_loader, criterion, optimizer, device, artifacts_dir, start_epoch, best_val_f1, scheduler=None):
     history = []
     
     for epoch in range(num_epochs):
-        print(f"\n--- Epoch {start_epoch + epoch + 1} ({stage_name}) ---")
+        current_lr = optimizer.param_groups[0]['lr']
+        print(f"\n--- Epoch {start_epoch + epoch + 1} ({stage_name}, lr={current_lr:.6f}) ---")
         
         train_loss, train_acc = train_one_epoch(model, train_loader, criterion, optimizer, device)
         val_loss, val_metrics = evaluate(model, val_loader, criterion, device)
@@ -86,6 +87,9 @@ def train_stage(model, stage_name, num_epochs, train_loader, val_loader, criteri
             best_val_f1 = val_f1
             print(">>> New best model! Saving...")
             torch.save(model.state_dict(), artifacts_dir / "best_model.pt")
+        
+        if scheduler is not None:
+            scheduler.step()
             
         history.append({
             "epoch": start_epoch + epoch + 1,
@@ -138,7 +142,7 @@ def main():
     for i, w in enumerate(class_weights):
         print(f"  {TARGET_CLASSES[i]}: count={class_counts[i]}, weight={w:.4f}")
         
-    criterion = nn.CrossEntropyLoss(weight=class_weights_tensor)
+    criterion = nn.CrossEntropyLoss(weight=class_weights_tensor, label_smoothing=0.1)
     
     # Model
     model = get_model(num_classes=8).to(device)
@@ -146,26 +150,28 @@ def main():
     all_history = []
     best_val_f1 = 0.0
     
-    # Stage 1
-    print("\n=== STAGE 1: CLASSIFIER TRAINING ===")
+    # Stage 1: Train classifier head only
+    print("\n=== STAGE 1: CLASSIFIER TRAINING (6 epochs) ===")
     freeze_backbone(model)
     optimizer1 = optim.AdamW(model.classifier.parameters(), lr=1e-3, weight_decay=1e-4)
+    scheduler1 = optim.lr_scheduler.CosineAnnealingLR(optimizer1, T_max=6)
     hist1, best_val_f1 = train_stage(
-        model, "classifier", 5, train_loader, val_loader, criterion, optimizer1, 
-        device, artifacts_dir, 0, best_val_f1
+        model, "classifier", 6, train_loader, val_loader, criterion, optimizer1, 
+        device, artifacts_dir, 0, best_val_f1, scheduler=scheduler1
     )
     all_history.extend(hist1)
     
-    # Stage 2
-    print("\n=== STAGE 2: FINE TUNING ===")
+    # Stage 2: Fine-tune backbone + classifier
+    print("\n=== STAGE 2: FINE TUNING (6 epochs) ===")
     # Load best so far before unfreezing
     if (artifacts_dir / "best_model.pt").exists():
         model.load_state_dict(torch.load(artifacts_dir / "best_model.pt", map_location=device, weights_only=True))
-    unfreeze_feature_blocks(model, blocks_to_unfreeze=2)
-    optimizer2 = optim.AdamW(filter(lambda p: p.requires_grad, model.parameters()), lr=1e-4, weight_decay=1e-4)
+    unfreeze_feature_blocks(model, blocks_to_unfreeze=4)
+    optimizer2 = optim.AdamW(filter(lambda p: p.requires_grad, model.parameters()), lr=5e-5, weight_decay=1e-4)
+    scheduler2 = optim.lr_scheduler.CosineAnnealingLR(optimizer2, T_max=6)
     hist2, best_val_f1 = train_stage(
-        model, "finetune", 3, train_loader, val_loader, criterion, optimizer2, 
-        device, artifacts_dir, len(hist1), best_val_f1
+        model, "finetune", 6, train_loader, val_loader, criterion, optimizer2, 
+        device, artifacts_dir, len(hist1), best_val_f1, scheduler=scheduler2
     )
     all_history.extend(hist2)
     

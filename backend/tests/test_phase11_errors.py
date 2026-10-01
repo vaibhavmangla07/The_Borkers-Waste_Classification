@@ -47,11 +47,10 @@ def test_cors_header():
 def test_sql_injection_like_category_input():
     response = client.get("/api/history?category=' OR 1=1 --")
     # Our category filtering uses parameterized queries via SQLAlchemy
-    # It should not break the syntax but instead not find the category (404)
-    assert response.status_code == 404
+    # It should not break the syntax but instead return an empty list (200)
+    assert response.status_code == 200
     data = response.json()
-    assert "error" in data
-    assert data["error"]["code"] == "NOT_FOUND"
+    assert len(data["items"]) == 0
 
 def test_invalid_upload():
     response = client.post(
@@ -74,13 +73,13 @@ def test_corrupted_image():
     assert "error" in data
 
 def test_invalid_history_parameters():
-    response = client.get("/api/history?page_size=0")
+    response = client.get("/api/history?limit=0")
     assert response.status_code == 422
     data = response.json()
     assert "error" in data
     assert data["error"]["code"] == "VALIDATION_ERROR"
 
-    response = client.get("/api/history?page_size=1000")
+    response = client.get("/api/history?limit=1000")
     assert response.status_code == 422
 
 @patch("app.routes.categories.CategoryService.get_categories")

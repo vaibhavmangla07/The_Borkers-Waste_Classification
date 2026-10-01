@@ -27,6 +27,15 @@ logger = logging.getLogger(__name__)
 # ImageNet labels emitted by the current pretrained model mapped to waste slugs.
 # Keep this mapping for selecting the primary waste category and persistence.
 WASTE_LABEL_MAPPING: dict[str, str] = {
+    "plastic": "plastic",
+    "paper": "paper",
+    "cardboard": "cardboard",
+    "glass": "glass",
+    "metal": "metal",
+    "organic": "organic",
+    "e-waste": "e-waste",
+    "other": "other",
+    # Legacy ImageNet mappings just in case
     "water bottle": "plastic",
     "pop bottle": "plastic",
     "pill bottle": "plastic",
@@ -43,6 +52,7 @@ WASTE_LABEL_MAPPING: dict[str, str] = {
     "banana": "organic",
     "bell pepper": "organic",
 }
+
 
 BIN_TYPE_MAP: dict[str, str] = {
     "plastic": "Dry / recyclable bin (Blue)",

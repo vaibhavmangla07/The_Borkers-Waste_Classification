@@ -29,25 +29,29 @@ export function GuidanceCard({ disposal, confidenceLevel = 'high' }) {
       )}
 
       <div className="guidance-sections">
-        {disposal.instructions && (
+        {disposal.instructions && disposal.instructions.length > 0 && (
           <div className="guidance-section do-section">
             <h4 className="section-label do-label">
               <CheckCircle2 size={16} /> What to Do
             </h4>
-            <div className="guidance-text">
-              {disposal.instructions}
-            </div>
+            <ul className="guidance-list">
+              {disposal.instructions.map((item, i) => (
+                <li key={i} className="guidance-text">{item}</li>
+              ))}
+            </ul>
           </div>
         )}
 
-        {disposal.do_not && (
+        {disposal.avoid && disposal.avoid.length > 0 && (
           <div className="guidance-section avoid-section">
             <h4 className="section-label avoid-label">
               <Info size={16} /> Things to Avoid
             </h4>
-            <div className="guidance-text">
-              {disposal.do_not}
-            </div>
+            <ul className="guidance-list">
+              {disposal.avoid.map((item, i) => (
+                <li key={i} className="guidance-text">{item}</li>
+              ))}
+            </ul>
           </div>
         )}
       </div>

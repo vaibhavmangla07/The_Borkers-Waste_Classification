@@ -12,9 +12,9 @@ export function Classify() {
   const handleAnalyze = async (file) => {
     try {
       const result = await classify(file);
-      if (result && result.id) {
-        // Navigate to result page with state or ID
-        navigate(`/result/${result.id}`, { state: { result } });
+      const resultId = result?.classification_id || result?.id;
+      if (result && resultId) {
+        navigate(`/result/${resultId}`, { state: { result } });
       }
     } catch {
       // Error is tracked in hook state and displayed in UploadBox

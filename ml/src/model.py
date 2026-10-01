@@ -7,9 +7,15 @@ def get_model(num_classes=8):
     weights = EfficientNet_B0_Weights.DEFAULT
     model = efficientnet_b0(weights=weights)
     
-    # Replace final classifier
+    # Replace final classifier with a stronger head
     num_ftrs = model.classifier[1].in_features
-    model.classifier[1] = nn.Linear(num_ftrs, num_classes)
+    model.classifier = nn.Sequential(
+        nn.Dropout(p=0.3),
+        nn.Linear(num_ftrs, 256),
+        nn.ReLU(inplace=True),
+        nn.Dropout(p=0.2),
+        nn.Linear(256, num_classes),
+    )
     
     return model
 

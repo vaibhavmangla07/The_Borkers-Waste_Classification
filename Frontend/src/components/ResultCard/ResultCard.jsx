@@ -8,12 +8,12 @@ export function ResultCard({ result, imageUrl }) {
   if (!result) return null;
 
   const {
-    id,
-    predicted_category,
+    classification_id,
+    category,
     confidence,
     confidence_level,
     predictions,
-    guidance,
+    disposal,
     model_name,
     model_version,
     created_at
@@ -31,7 +31,7 @@ export function ResultCard({ result, imageUrl }) {
       <div className="result-card-top">
         {imageUrl && (
           <div className="result-thumbnail-container">
-            <img src={imageUrl} alt={`Classified as ${predicted_category?.name}`} className="result-thumbnail" />
+            <img src={imageUrl} alt={`Classified as ${category}`} className="result-thumbnail" />
             <div className={`confidence-tag-overlay tag-${level}`}>
               {level.toUpperCase()} CONFIDENCE
             </div>
@@ -40,7 +40,7 @@ export function ResultCard({ result, imageUrl }) {
 
         <div className="result-primary-info">
           <div className="result-meta-row">
-            <span className="result-id">Scan #{id || 'ID'}</span>
+            <span className="result-id">Scan #{classification_id || 'ID'}</span>
             <div className="result-stats-pills">
               {model_version && (
                 <span className="stat-pill" title="Model Version">
@@ -53,7 +53,7 @@ export function ResultCard({ result, imageUrl }) {
             </div>
           </div>
 
-          <h2 className="result-category-title">{predicted_category?.name}</h2>
+          <h2 className="result-category-title">{category}</h2>
 
           <div className="result-confidence-highlight">
             <div className="confidence-numeric-box">
@@ -87,9 +87,9 @@ export function ResultCard({ result, imageUrl }) {
         </div>
       )}
 
-      {guidance && guidance.length > 0 && (
+      {disposal && (
         <div className="result-section-divider">
-          <GuidanceCard disposal={guidance[0]} confidenceLevel={level} />
+          <GuidanceCard disposal={disposal} confidenceLevel={level} />
         </div>
       )}
     </div>

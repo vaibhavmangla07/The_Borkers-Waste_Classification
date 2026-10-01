@@ -19,13 +19,6 @@ export function Result() {
       let isMounted = true;
       api.getHistoryItem(id)
         .then(async (data) => {
-          if (!data.guidance && data.predicted_category?.slug) {
-            try {
-              data.guidance = await api.getCategoryGuidance(data.predicted_category.slug);
-            } catch (gErr) {
-              console.error('Failed to load guidance:', gErr);
-            }
-          }
           if (isMounted) setResult(data);
         })
         .catch((err) => {

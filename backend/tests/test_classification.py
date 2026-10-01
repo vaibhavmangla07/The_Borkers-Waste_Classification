@@ -39,32 +39,27 @@ def test_classify_image_success(mock_predictor):
     img_bytes = create_test_image("JPEG")
     response = client.post(
         "/api/classify",
-        files={"file": ("test_classify.jpg", img_bytes, "image/jpeg")}
+        files={"image": ("test_classify.jpg", img_bytes, "image/jpeg")}
     )
     assert response.status_code == 200
     data = response.json()
     
-    assert "id" in data
-    assert data["model_name"] == "mock_model"
-    assert data["predicted_category"]["slug"] == "plastic"
+    assert "classification_id" in data
+    assert data["category"] == "Plastic"
     assert data["confidence"] == 0.95
     assert len(data["predictions"]) == 3
-    assert data["predictions"][0]["label"] == "plastic"
-    assert data["predictions"][1]["label"] == "paper"
-    assert data["predictions"][2]["label"] == "e-waste"
-    assert len(data["guidance"]) > 0
+    assert data["predictions"][0]["category"] == "plastic"
+    assert data["predictions"][1]["category"] == "paper"
+    assert data["predictions"][2]["category"] == "e-waste"
+    assert data["disposal"] is not None
 
-    # cleanup image
-    file_path = Path(data["image_filename"])
-    # image_filename is just the name, UPLOAD_DIR / name is the path
-    full_path = Path("storage/uploads") / data["image_filename"]
-    if full_path.exists():
-        full_path.unlink()
-
-    # cleanup DB
+    # cleanup DB and image
     db = next(get_db())
-    c = db.query(Classification).filter(Classification.id == data["id"]).first()
+    c = db.query(Classification).filter(Classification.id == data["classification_id"]).first()
     if c:
+        full_path = Path(c.image_path)
+        if full_path.exists():
+            full_path.unlink()
         db.query(ClassificationPrediction).filter(ClassificationPrediction.classification_id == c.id).delete()
         db.delete(c)
         db.commit()
@@ -72,7 +67,7 @@ def test_classify_image_success(mock_predictor):
 def test_classify_invalid_image():
     response = client.post(
         "/api/classify",
-        files={"file": ("fake.jpg", io.BytesIO(b"Not an image"), "image/jpeg")}
+        files={"image": ("fake.jpg", io.BytesIO(b"Not an image"), "image/jpeg")}
     )
     assert response.status_code == 400
 
@@ -83,7 +78,7 @@ def test_classify_ai_failure(mock_predictor):
     img_bytes = create_test_image("JPEG")
     response = client.post(
         "/api/classify",
-        files={"file": ("test_fail.jpg", img_bytes, "image/jpeg")}
+        files={"image": ("test_fail.jpg", img_bytes, "image/jpeg")}
     )
     assert response.status_code == 500
     
@@ -104,21 +99,19 @@ def test_classify_unknown_category(mock_predictor):
     img_bytes = create_test_image("JPEG")
     response = client.post(
         "/api/classify",
-        files={"file": ("test_unknown.jpg", img_bytes, "image/jpeg")}
+        files={"image": ("test_unknown.jpg", img_bytes, "image/jpeg")}
     )
     # the mapping defaults to 'other', so it should succeed
     assert response.status_code == 200
     data = response.json()
-    assert data["predicted_category"]["slug"] == "other"
+    assert data["category"] == "Other"
     
-    full_path = Path("storage/uploads") / data["image_filename"]
-    if full_path.exists():
-        full_path.unlink()
-
-    # cleanup DB
     db = next(get_db())
-    c = db.query(Classification).filter(Classification.id == data["id"]).first()
+    c = db.query(Classification).filter(Classification.id == data["classification_id"]).first()
     if c:
+        full_path = Path(c.image_path)
+        if full_path.exists():
+            full_path.unlink()
         db.query(ClassificationPrediction).filter(ClassificationPrediction.classification_id == c.id).delete()
         db.delete(c)
         db.commit()

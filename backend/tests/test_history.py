@@ -67,24 +67,23 @@ def test_get_history_empty():
     # Might not be empty if other tests ran, but let's just check format
     assert isinstance(data["items"], list)
     assert data["page"] == 1
-    assert data["page_size"] == 10
+    assert data["limit"] == 10
 
 def test_get_history_pagination(test_classifications):
-    response = client.get("/api/history?page=1&page_size=2")
+    response = client.get("/api/history?page=1&limit=2")
     assert response.status_code == 200
     data = response.json()
     assert len(data["items"]) == 2
     assert data["total"] >= 5
-    assert data["total_pages"] >= 3
     assert data["page"] == 1
-    assert data["page_size"] == 2
+    assert data["limit"] == 2
     
     # check newest first
     item1 = data["items"][0]
     item2 = data["items"][1]
     assert item1["id"] > item2["id"] # assuming monotonic creation
 
-    response2 = client.get("/api/history?page=2&page_size=2")
+    response2 = client.get("/api/history?page=2&limit=2")
     data2 = response2.json()
     assert len(data2["items"]) == 2
     assert data2["items"][0]["id"] < item2["id"]
@@ -95,22 +94,20 @@ def test_get_history_category_filter(test_classifications):
     data = response.json()
     assert len(data["items"]) >= 3
     for item in data["items"]:
-        assert item["predicted_category"]["slug"] == "plastic"
+        assert item["category"].lower() == "plastic"
 
 def test_get_history_invalid_category():
     response = client.get("/api/history?category=invalid-category-xyz")
-    assert response.status_code == 404
+    assert response.status_code == 200
+    assert len(response.json()["items"]) == 0
 
 def test_get_history_detail(test_classifications):
     target_id = test_classifications[0].id
     response = client.get(f"/api/history/{target_id}")
     assert response.status_code == 200
     data = response.json()
-    assert data["id"] == target_id
-    assert "image_filename" in data
-    # make sure absolute path is NOT in image_filename
-    assert "/" not in data["image_filename"] and "\\" not in data["image_filename"]
-    assert "predicted_category" in data
+    assert data["classification_id"] == target_id
+    assert "category" in data
     assert "predictions" in data
     assert len(data["predictions"]) > 0
 

@@ -226,7 +226,7 @@ export const api = {
     }
 
     const formData = new FormData();
-    formData.append('file', file);
+    formData.append('image', file);
 
     try {
       return await request('/api/classify', {
