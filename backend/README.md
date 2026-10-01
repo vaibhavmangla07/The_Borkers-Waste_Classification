@@ -36,3 +36,30 @@ uvicorn app.main:app --reload
 - **Health Check**: [http://127.0.0.1:8000/health](http://127.0.0.1:8000/health)
 - **Swagger UI**: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
 - **ReDoc**: [http://127.0.0.1:8000/redoc](http://127.0.0.1:8000/redoc)
+
+---
+
+## Phase 4: Database Models, Alembic Migrations & Seed Data
+
+### Database
+PostgreSQL
+
+### ORM
+SQLAlchemy
+
+### Migration Tool
+Alembic
+
+### Migration Commands
+
+```bash
+alembic revision --autogenerate -m "migration message"
+alembic upgrade head
+alembic downgrade -1
+```
+
+### Seed
+
+```bash
+python scripts/seed.py
+```

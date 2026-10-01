@@ -20,3 +20,17 @@ def test_openapi_schema(client: TestClient):
     assert "openapi" in data
     assert data["info"]["title"] == "EcoVision AI"
     assert data["info"]["version"] == "0.1.0"
+
+
+def test_models_and_metadata():
+    """Verify that all models import cleanly and register their expected tables."""
+    from app.database.base import Base
+    import app.models  # noqa: F401
+
+    expected_tables = {
+        "waste_categories",
+        "disposal_guidelines",
+        "classifications",
+        "classification_predictions",
+    }
+    assert expected_tables.issubset(set(Base.metadata.tables.keys()))
