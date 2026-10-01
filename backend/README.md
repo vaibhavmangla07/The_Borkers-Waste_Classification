@@ -11,4 +11,28 @@ Stack:
 - Kubernetes
 - Helm
 
-The backend is being developed phase-by-phase. Currently in Phase 1 (Backend Project Foundation).
+The backend is being developed phase-by-phase.
+
+## Phase 2: FastAPI Initialization
+
+Project:
+EcoVision AI
+
+Backend:
+FastAPI
+
+### Run locally:
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements-dev.txt
+uvicorn app.main:app --reload
+```
+
+### Endpoints & Documentation:
+
+- **API Root**: [http://127.0.0.1:8000](http://127.0.0.1:8000)
+- **Health Check**: [http://127.0.0.1:8000/health](http://127.0.0.1:8000/health)
+- **Swagger UI**: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
+- **ReDoc**: [http://127.0.0.1:8000/redoc](http://127.0.0.1:8000/redoc)

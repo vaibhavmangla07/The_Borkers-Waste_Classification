@@ -5,8 +5,11 @@ from app.config import settings
 
 app = FastAPI(
     title=settings.APP_NAME,
+    description="EcoVision AI — Smart Waste Classification & Disposal Intelligence Platform",
+    version="0.1.0",
 )
 
+# Parse allowed origins from configuration
 origins = [origin.strip() for origin in settings.CORS_ORIGINS.split(",") if origin.strip()]
 
 app.add_middleware(
@@ -18,6 +21,11 @@ app.add_middleware(
 )
 
 
+@app.get("/")
+def read_root():
+    return {"message": "Welcome to EcoVision AI API"}
+
+
 @app.get("/health")
 def health_check():
-    return {"status": "ok"}
+    return {"status": "healthy"}
