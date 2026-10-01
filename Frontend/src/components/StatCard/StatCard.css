@@ -1,0 +1,98 @@
+.stat-card {
+  padding: 1.6rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  position: relative;
+  overflow: hidden;
+  transition: transform var(--transition-smooth), border-color var(--transition-smooth), box-shadow var(--transition-smooth), background-color var(--transition-smooth);
+}
+
+.stat-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(52, 211, 153, 0.35);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.55), 0 0 20px rgba(16, 185, 129, 0.16);
+  background-color: rgba(22, 36, 29, 0.75);
+}
+
+.stat-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.stat-card-label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.stat-card-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-sm);
+  background: rgba(16, 185, 129, 0.12);
+  border: 1px solid rgba(16, 185, 129, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--primary-400);
+  transition: transform var(--transition-fast), border-color var(--transition-fast);
+}
+
+.stat-card:hover .stat-card-icon {
+  border-color: rgba(52, 211, 153, 0.4);
+}
+
+.stat-card-value-row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  margin-top: 0.25rem;
+}
+
+.stat-card-value {
+  font-size: 2.15rem;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: -0.03em;
+  font-family: var(--font-sans);
+  line-height: 1.1;
+}
+
+.stat-trend-badge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.18rem 0.55rem;
+  border-radius: var(--radius-full);
+}
+
+.trend-up {
+  background: rgba(16, 185, 129, 0.15);
+  color: var(--primary-300);
+  border: 1px solid rgba(16, 185, 129, 0.25);
+}
+
+.trend-down {
+  background: rgba(239, 68, 68, 0.15);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.25);
+}
+
+.trend-neutral {
+  background: rgba(148, 163, 184, 0.15);
+  color: var(--text-secondary);
+  border: 1px solid rgba(148, 163, 184, 0.25);
+}
+
+.stat-card-subtext {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stat-card {
+    transition: none !important;
+    transform: none !important;
+  }
+}
