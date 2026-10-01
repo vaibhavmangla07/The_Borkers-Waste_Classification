@@ -61,6 +61,14 @@ def test_classify_image_success(mock_predictor):
     if full_path.exists():
         full_path.unlink()
 
+    # cleanup DB
+    db = next(get_db())
+    c = db.query(Classification).filter(Classification.id == data["id"]).first()
+    if c:
+        db.query(ClassificationPrediction).filter(ClassificationPrediction.classification_id == c.id).delete()
+        db.delete(c)
+        db.commit()
+
 def test_classify_invalid_image():
     response = client.post(
         "/api/classify",
@@ -106,3 +114,11 @@ def test_classify_unknown_category(mock_predictor):
     full_path = Path("storage/uploads") / data["image_filename"]
     if full_path.exists():
         full_path.unlink()
+
+    # cleanup DB
+    db = next(get_db())
+    c = db.query(Classification).filter(Classification.id == data["id"]).first()
+    if c:
+        db.query(ClassificationPrediction).filter(ClassificationPrediction.classification_id == c.id).delete()
+        db.delete(c)
+        db.commit()
