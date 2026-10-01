@@ -1,171 +1,80 @@
 # EcoVision AI Backend
 
-Backend for the EcoVision AI waste classification platform.
+## Stack
 
-Stack:
-
-- FastAPI
-- PostgreSQL
-- PyTorch
-- Docker
-- Kubernetes
-- Helm
-
-The backend is being developed phase-by-phase.
-
-## Phase 2: FastAPI Initialization
-
-Project:
-EcoVision AI
-
-Backend:
+Python 3.11
 FastAPI
-
-### Run locally:
-
-```bash
-python -m venv .venv
-source .venv/bin/activate
-pip install -r requirements-dev.txt
-uvicorn app.main:app --reload
-```
-
-### Endpoints & Documentation:
-
-- **API Root**: [http://127.0.0.1:8000](http://127.0.0.1:8000)
-- **Health Check**: [http://127.0.0.1:8000/health](http://127.0.0.1:8000/health)
-- **Swagger UI**: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
-- **ReDoc**: [http://127.0.0.1:8000/redoc](http://127.0.0.1:8000/redoc)
-
----
-
-## Phase 4: Database Models, Alembic Migrations & Seed Data
-
-### Database
 PostgreSQL
-
-### ORM
 SQLAlchemy
-
-### Migration Tool
 Alembic
+PyTorch
+Docker
 
-### Migration Commands
+## Environment
 
+Configure these environment variables in a `.env` file (see `.env.example`):
+
+- `DATABASE_URL`: e.g. `postgresql+psycopg://username:password@localhost:5432/ecovision`
+- `CORS_ORIGINS`: e.g. `http://localhost:5173`
+- `MAX_UPLOAD_MB`: e.g. `10`
+- `MODEL_PATH`: e.g. `artifacts/model.pt`
+- `CLASSES_PATH`: e.g. `artifacts/classes.json`
+- `HIGH_THRESHOLD`: e.g. `0.80`
+- `MODERATE_THRESHOLD`: e.g. `0.60`
+
+## Local development
+
+1. Activate environment: `.venv/bin/activate` (or source your virtual environment)
+2. Start PostgreSQL locally (e.g. via Docker: `docker run --name ecovision-db -e POSTGRES_USER=ecovision -e POSTGRES_PASSWORD=ecovision -e POSTGRES_DB=ecovision -p 5432:5432 -d postgres:15`)
+3. Run migrations: `alembic upgrade head`
+4. Seed database: `python -m app.database.seed`
+5. Start Uvicorn: `uvicorn app.main:app --reload`
+6. Run tests: `pytest -q`
+
+## Docker
+
+Build the backend container:
 ```bash
-alembic revision --autogenerate -m "migration message"
-alembic upgrade head
-alembic downgrade -1
+docker build -t ecovision-backend:1.0 .
 ```
 
-### Seed
-
+Run the backend container (requires PostgreSQL network):
 ```bash
-python scripts/seed.py
+docker run --rm \
+  -p 8000:8000 \
+  --network ecovision-net \
+  -e DATABASE_URL=postgresql+psycopg://ecovision:password@ecovision-db:5432/ecovision \
+  -e CORS_ORIGINS=http://localhost:5173 \
+  ecovision-backend:1.0
 ```
 
----
+## API
 
-## Phase 5: Pydantic Schemas + Categories API
+Final endpoints exposed:
 
-### New Endpoints
-- **GET** `/api/categories` - Get all waste categories
-- **GET** `/api/categories/{slug}` - Get a category by its slug
-- **GET** `/api/categories/{slug}/guidance` - Get disposal guidance for a category
+- `GET /`
+- `GET /health`
+- `GET /api/categories`
+- `GET /api/categories/{slug}`
+- `GET /api/categories/{slug}/guidance`
+- `POST /api/upload`
+- `POST /api/classify`
+- `GET /api/history`
+- `GET /api/history/{id}`
+- `GET /api/analytics/summary`
+- `GET /api/analytics/categories`
+- `GET /api/analytics/recent`
 
----
+## Testing
 
-## Phase 6: Image Upload & Validation
-
-### Image Upload API
-- **POST** `/api/upload` - Upload an image for waste classification
-
-**Content-Type:** `multipart/form-data`
-**Field:** `file`
-
-**Supported Formats:** JPEG, PNG, WEBP
-**Maximum Size:** 10 MB
-
-**Example Response:**
-```json
-{
-    "filename": "generated-uuid.jpg",
-    "original_filename": "plastic-bottle.jpg",
-    "content_type": "image/jpeg",
-    "size_bytes": 245123,
-    "width": 640,
-    "height": 480,
-    "message": "Image uploaded successfully"
-}
+Run the test suite with:
+```bash
+pytest -q
 ```
 
-*Note: Phase 6 only validates and stores the image locally. AI classification will be added in Phase 7.*
+## Model
 
----
-
-## Phase 7: PyTorch AI Module & Pretrained Vision Model
-
-### AI
-**Framework:** PyTorch  
-**Vision:** torchvision  
-**Model:** MobileNetV3 Small (Lightweight pretrained model)  
-**Inference:** Local execution  
-**Device Support:** CUDA / MPS / CPU  
-**Top-K:** 3 predictions returned  
-
-*Important note: The current pretrained model is an AI pipeline foundation to establish local inference correctly without relying on cloud services. The final waste-category classifier will use a project-specific fine-tuned model.*
-
----
-
-## Phase 8: End-to-End Waste Classification API
-
-### Classification API
-- **POST** `/api/classify` - Upload and classify an image in one step
-
-**Content-Type:** `multipart/form-data`
-**Field:** `file`
-
-**Example Response:**
-```json
-{
-    "id": 1,
-    "image_filename": "uuid.jpg",
-    "predicted_category": {
-        "id": 1,
-        "name": "Plastic",
-        "slug": "plastic",
-        "description": "...",
-        "is_active": true,
-        "created_at": "...",
-        "updated_at": "..."
-    },
-    "confidence": 0.95,
-    "confidence_level": "high",
-    "model_name": "mobilenet_v3_small",
-    "model_version": "0.1.0",
-    "predictions": [
-        {
-            "rank": 1,
-            "label": "plastic",
-            "confidence": 0.95,
-            "confidence_level": "high"
-        }
-    ],
-    "guidance": [
-        {
-            "id": 1,
-            "category_id": 1,
-            "title": "Plastic Disposal",
-            "instructions": "Rinse before recycling",
-            "do_not": "Do not put plastic bags in the bin",
-            "created_at": "...",
-            "updated_at": "..."
-        }
-    ],
-    "created_at": "..."
-}
-```
-
-
-
-
+The AI classification model and metadata must be placed in the `artifacts/` directory:
+- `artifacts/model.pt`: The PyTorch model checkpoint.
+- `artifacts/classes.json`: The class mapping (must match the seeded categories in the DB).
+- `artifacts/metrics.json`: Accuracy and other validation metrics.
