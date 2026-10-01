@@ -8,8 +8,10 @@ from PIL import Image, UnidentifiedImageError
 # Configure logger
 logger = logging.getLogger(__name__)
 
+from app.config import settings
+
 # Constants
-MAX_FILE_SIZE = 10 * 1024 * 1024  # 10 MB
+MAX_FILE_SIZE = settings.MAX_UPLOAD_MB * 1024 * 1024
 ALLOWED_MIME_TYPES = {"image/jpeg", "image/png", "image/webp"}
 UPLOAD_DIR = Path("storage/uploads")
 
