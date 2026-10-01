@@ -22,12 +22,12 @@ Weighted CrossEntropyLoss computed from training split distribution.
 ## Training
 Stage 1 (Classifier): 5 epochs
 Stage 2 (Fine-tuning): 3 epochs (Top 2 blocks unfreezed)
-Best Validation Macro F1: 0.9055
+Best Validation Macro F1: 0.9297
 
 ## Test Performance
-- Accuracy: 0.9250
+- Accuracy: 0.9378
 - Top-3 Accuracy: 0.9910
-- Macro F1: 0.8854
+- Macro F1: 0.9092
 
 ## Backend Integration
 The model artifact is saved in `ml/artifacts/best_model.pt`. It's a raw state dict. The backend predictor will need to initialize an EfficientNet-B0 backbone with an 8-class linear classifier and load these weights. Classes mapping matches exactly with `ml/artifacts/classes.json`.

@@ -75,7 +75,7 @@ export function UploadBox({ onAnalyze, loading = false, externalError = null }) 
     }
   };
 
-  const displayError = externalError?.message || localError;
+  const displayError = (typeof externalError === 'string' ? externalError : externalError?.message) || localError;
 
   return (
     <div className="upload-container">

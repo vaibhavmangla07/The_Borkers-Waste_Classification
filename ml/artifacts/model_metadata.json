@@ -36,11 +36,11 @@
     0.0001
   ],
   "batch_size": 32,
-  "epochs": 8,
-  "best_validation_macro_f1": 0.9054862125223612,
-  "training_timestamp": "2026-10-01T07:16:42.708720",
+  "epochs": 12,
+  "best_validation_macro_f1": 0.9296776705938776,
+  "training_timestamp": "2026-10-01T10:09:37.625443",
   "test_images": 2332,
-  "test_accuracy": 0.9249571183533448,
-  "test_macro_f1": 0.8853725935680257,
+  "test_accuracy": 0.9378216123499142,
+  "test_macro_f1": 0.9092061562622065,
   "test_top3_accuracy": 0.9909948542024014
 }

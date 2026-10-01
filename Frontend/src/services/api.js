@@ -304,7 +304,8 @@ export const api = {
 
   async getAnalyticsActivity(limit = 10) {
     try {
-      const data = await request(`/api/analytics/recent?limit=${limit}`);
+      const parsedLimit = typeof limit === 'number' && !isNaN(limit) ? limit : 20;
+      const data = await request(`/api/analytics/recent?limit=${parsedLimit}`);
       return data.items || [];
     } catch (err) {
       if (ENABLE_MOCKS_ON_FAILURE) {

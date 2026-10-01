@@ -9,7 +9,7 @@ from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from app.ai.config import get_confidence_level
-from app.ai.predictor import Predictor
+from app.ai.inference import predict_image
 from app.models.classification import Classification
 from app.models.classification_prediction import ClassificationPrediction
 from app.models.waste_category import WasteCategory
@@ -106,7 +106,7 @@ class ClassificationService:
         try:
             with Image.open(file_path) as image:
                 t0 = time.perf_counter()
-                prediction_response = Predictor.predict(image)
+                prediction_response = predict_image(image)
                 inference_ms = int((time.perf_counter() - t0) * 1000)
 
             predictions_raw = prediction_response.predictions

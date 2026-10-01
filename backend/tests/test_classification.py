@@ -22,8 +22,8 @@ def create_test_image(format="JPEG", size=(100, 100), color="blue"):
 
 @pytest.fixture
 def mock_predictor():
-    with patch("app.services.classification_service.Predictor") as mock:
-        mock.predict.return_value = PredictionResponse(
+    with patch("app.services.classification_service.predict_image") as mock:
+        mock.return_value = PredictionResponse(
             model_name="mock_model",
             model_version="0.1.0",
             device="cpu",
@@ -71,9 +71,9 @@ def test_classify_invalid_image():
     )
     assert response.status_code == 400
 
-@patch("app.services.classification_service.Predictor")
+@patch("app.services.classification_service.predict_image")
 def test_classify_ai_failure(mock_predictor):
-    mock_predictor.predict.side_effect = Exception("AI failure")
+    mock_predictor.side_effect = Exception("AI failure")
     
     img_bytes = create_test_image("JPEG")
     response = client.post(
@@ -85,9 +85,9 @@ def test_classify_ai_failure(mock_predictor):
     # check that file is cleaned up
     # wait, we can't easily check the filename since it's random, but we can verify our upload dir doesn't grow
     
-@patch("app.services.classification_service.Predictor")
+@patch("app.services.classification_service.predict_image")
 def test_classify_unknown_category(mock_predictor):
-    mock_predictor.predict.return_value = PredictionResponse(
+    mock_predictor.return_value = PredictionResponse(
         model_name="mock_model",
         model_version="0.1.0",
         device="cpu",

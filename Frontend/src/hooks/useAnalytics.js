@@ -8,6 +8,7 @@ export function useAnalytics(range = '7d') {
   const [summary, setSummary] = useState(null);
   const [categories, setCategories] = useState([]);
   const [activity, setActivity] = useState([]);
+  const [recentItems, setRecentItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -20,19 +21,32 @@ export function useAnalytics(range = '7d') {
         const [sumData, catData, actData] = await Promise.all([
           api.getAnalyticsSummary(),
           api.getAnalyticsCategories(),
-          api.getAnalyticsActivity(range)
+          api.getAnalyticsActivity(30)
         ]);
         if (isMounted) {
           setSummary(sumData);
           setCategories(catData?.items || []);
+          setRecentItems(actData || []);
           
-          // Group recent classifications by date for the activity chart
-          const grouped = (actData || []).reduce((acc, curr) => {
-            const dateStr = new Date(curr.created_at).toISOString().split('T')[0];
-            if (!acc[dateStr]) acc[dateStr] = 0;
-            acc[dateStr]++;
-            return acc;
-          }, {});
+          const days = range === '30d' ? 30 : 7;
+          const grouped = {};
+          
+          // Seed the last N days with 0 so chart always renders complete dates
+          for (let i = days - 1; i >= 0; i--) {
+            const d = new Date();
+            d.setDate(d.getDate() - i);
+            const key = d.toISOString().split('T')[0];
+            grouped[key] = 0;
+          }
+
+          (actData || []).forEach((curr) => {
+            if (curr.created_at) {
+              const dateStr = new Date(curr.created_at).toISOString().split('T')[0];
+              if (grouped[dateStr] !== undefined) {
+                grouped[dateStr]++;
+              }
+            }
+          });
           
           const chartData = Object.entries(grouped)
             .sort((a, b) => a[0].localeCompare(b[0]))
@@ -61,6 +75,7 @@ export function useAnalytics(range = '7d') {
     summary,
     categories,
     activity,
+    recentItems,
     loading,
     error
   };

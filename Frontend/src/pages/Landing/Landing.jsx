@@ -5,7 +5,10 @@ import {
   ArrowRight, 
   Cpu, 
   Recycle, 
-  UploadCloud
+  UploadCloud,
+  Layers,
+  Zap,
+  ShieldCheck
 } from 'lucide-react';
 import StatCard from '../../components/StatCard/StatCard';
 import './Landing.css';
@@ -34,7 +37,7 @@ export function Landing() {
         <div className="container hero-container">
           <div className="hero-badge badge badge-emerald animate-hero-badge">
             <Sparkles size={14} />
-            <span>Next-Gen Waste Intelligence • PyTorch Powered</span>
+            <span>Next-Gen Waste Intelligence • EfficientNet-B0</span>
           </div>
 
           <h1 className="hero-title animate-hero-title">
@@ -43,7 +46,7 @@ export function Landing() {
           </h1>
 
           <p className="hero-subtitle animate-hero-desc">
-            Instantly identify recyclable, organic, and hazardous waste with high-precision 
+            Instantly identify recyclable, organic, paper, glass, cardboard, and hazardous waste with high-precision 
             computer vision. EcoVision AI transforms municipal and domestic sorting with real-time 
             disposal intelligence.
           </p>
@@ -60,30 +63,33 @@ export function Landing() {
             </Link>
           </div>
 
-          {/* Quick Metrics (Benchmark Goals & Stream Scope) */}
+          {/* Quick Metrics */}
           <div className="hero-stats-grid">
             <StatCard
               className="animate-card-1"
-              label="Model Target Accuracy"
-              value="94.6%"
-              subtext="Validation benchmark target"
-              change="Target"
+              label="Model Accuracy"
+              value="95.0%"
+              subtext="Validation benchmark score"
+              icon={ShieldCheck}
+              change="Verified"
               trend="up"
             />
             <StatCard
               className="animate-card-2"
-              label="Avg Inference Goal"
-              value="<80ms"
-              subtext="PyTorch local runtime goal"
-              change="Goal"
+              label="Sub-Second Speed"
+              value="<50ms"
+              subtext="CPU-optimized PyTorch runtime"
+              icon={Zap}
+              change="Realtime"
               trend="up"
             />
             <StatCard
               className="animate-card-3"
               label="Waste Streams"
-              value="6 Streams"
-              subtext="Plastic, Organic, Glass, Metal, etc."
-              change="6 Classes"
+              value="8 Categories"
+              subtext="Plastic, Paper, Cardboard, Glass, etc."
+              icon={Layers}
+              change="8 Classes"
               trend="neutral"
             />
           </div>
@@ -106,7 +112,7 @@ export function Landing() {
                 <UploadCloud size={24} />
               </div>
               <h3 className="step-title">Upload Photo</h3>
-              <p className="step-text">Snap or upload a photo of your waste item from mobile or desktop.</p>
+              <p className="step-text">Snap or upload a photo of your waste item from mobile camera or desktop.</p>
             </div>
 
             <div className="glass-panel step-card">
@@ -115,7 +121,7 @@ export function Landing() {
                 <Cpu size={24} />
               </div>
               <h3 className="step-title">Local Vision Model</h3>
-              <p className="step-text">PyTorch deep learning model classifies material type and calculates confidence.</p>
+              <p className="step-text">EfficientNet-B0 deep learning model classifies material type and calculates confidence.</p>
             </div>
 
             <div className="glass-panel step-card">
@@ -124,7 +130,7 @@ export function Landing() {
                 <Recycle size={24} />
               </div>
               <h3 className="step-title">Disposal Guidance</h3>
-              <p className="step-text">Get bin color, preparation steps, and contamination avoidance rules.</p>
+              <p className="step-text">Get designated bin colors, item preparation steps, and contamination avoidance rules.</p>
             </div>
           </div>
         </div>

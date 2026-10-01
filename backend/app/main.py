@@ -2,6 +2,7 @@ import logging
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.exceptions import RequestValidationError
 from starlette.exceptions import HTTPException as StarletteHTTPException
 from sqlalchemy.exc import SQLAlchemyError
@@ -44,6 +45,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# GZip Compression
+app.add_middleware(GZipMiddleware, minimum_size=1000)
 
 # 3. Exception Handlers
 @app.exception_handler(AppError)
@@ -126,8 +130,9 @@ def health_check():
 
 @app.get("/readiness")
 def readiness_check():
-    from app.ai.model import ModelLoader
+    from app.ai.inference import init_ai, _MODEL
+    init_ai()
     return {
         "status": "ready",
-        "model_available": ModelLoader.is_available()
+        "model_available": _MODEL is not None
     }

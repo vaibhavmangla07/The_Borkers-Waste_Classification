@@ -72,7 +72,7 @@ export function Result() {
         <div className="result-display-wrapper">
           <ResultCard
             result={result}
-            imageUrl={result.thumbnail || null}
+            imageUrl={result.thumbnail || (result.classification_id ? api.getHistoryImageUrl(result.classification_id) : (id ? api.getHistoryImageUrl(id) : null))}
           />
         </div>
       )}
